@@ -4,9 +4,9 @@ Created on Thu May 18 17:22:31 2023
 
 @author: lixiang
 """
+# %%
 import os.path
 import io
-
 import matplotlib
 from scipy.interpolate import griddata
 import pandas as pd
@@ -27,15 +27,14 @@ import cmaps
 import matplotlib.colors as mcolors
 
 
-#%%
-def normal_plot_scatter_img(extents, data, lon,lat, filename, title, norm, colormap,level):
+# %%
+def normal_plot_scatter_img(extents, data, lon, lat, filename, title, norm, colormap, level):
     '''
-
     :param extents: 坐标范围
-    :param data: 写入的数据
-    :param lon:  定义经度格网
-    :param lat:  定义纬度格网
-    :param filename: 输出png的文件名
+    :param data: 写入的数据,2D
+    :param lon:  定义经度格网,2D
+    :param lat:  定义纬度格网,2D
+    :param filename: 输出png的文件名,str
     :param title: png标题，已删除的参数，可传入''
     :param norm: 最大值，最小值
     :param colormap: 颜色表
@@ -65,7 +64,8 @@ def normal_plot_scatter_img(extents, data, lon,lat, filename, title, norm, color
 
     # im = ax.imshow(data, extent=extents, interpolation='spline36',
     #                alpha=alhpa, cmap=colormap, norm=norm)
-    im2 = ax.contourf(lon,lat,data,extent=extents,cmap=colormap,norm=norm,levels=level,extend="both")
+    im2 = ax.contourf(lon, lat, data, extent=extents,
+                      cmap=colormap, norm=norm, levels=level, extend="both")
     # im2=plt.imshow(tdata,extent=extents,cmap=my_cmap)
     cbar = fig.colorbar(im2, ax=ax)
     cbar.ax.tick_params(labelsize='small')
