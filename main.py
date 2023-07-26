@@ -1,7 +1,7 @@
 '''
 Date         : 2023-07-26 16:13:18
 LastEditors  : ChenKt
-LastEditTime : 2023-07-26 19:42:06
+LastEditTime : 2023-07-26 20:00:41
 FilePath     : /elect_visualization/main.py
 Aim          :
 Mission      :
@@ -298,7 +298,7 @@ class Plotter:
 
         #city_name = gpd.read_file(city,encoding='utf-8')
         # print(city_name)
-        for x, y, label in zip(city_name.representative_point().x, city_name.representative_point().y, city_name['SBASIN_CH']):
+        for x, y, label in zip(city_name.representative_point().x, city_name.representative_point().y, city_name['地名']):
             ax.text(x-0.1, y, label, fontsize=10)
 
         ax.add_geometries(city_name.geometry, ccrs.PlateCarree(),
@@ -350,8 +350,8 @@ class Plotter:
         cb = plt.colorbar(a, cax, label=variable_label)
         cb.update_ticks()
 
-        plt.savefig(output_file, bbox_inches='tight', pad_inches=0.2)
-        plt.close()
+        # plt.savefig(output_file, bbox_inches='tight', pad_inches=0.2)
+        plt.show()
 # %%
 for i in range(0, len(data) - 1):
     Plotter.plot_contour_map(data[i], '降水量/$mm$', [0, 0.1, 10, 25, 50, 100, 250, 500],
