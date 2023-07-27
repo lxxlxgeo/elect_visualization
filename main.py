@@ -1,7 +1,7 @@
 '''
 Date         : 2023-07-26 16:13:18
 LastEditors  : ChenKt
-LastEditTime : 2023-07-27 17:49:06
+LastEditTime : 2023-07-27 19:30:24
 FilePath     : /elect_visualization/main.py
 Aim          :
 Mission      :
@@ -15,11 +15,15 @@ import cmaps
 #%%
 
 #%%
-fpath = '../ECMWF/C1D-grib/'
+fpath = '/mnt/d/kt/project/yl/2023-HLJIEE-MicroMeteorologicalServices/ECMWF/C1D-grib/'
 latS = 42.0
 latN = 55.0
 lonL = 120.0
 lonR = 135.5
+# latS = 22.0
+# latN = 55.0
+# lonL = 100.0
+# lonR = 145.5
 variable_name = ['Convective available potential energy',
                  'Total precipitation',
                  '10 metre wind gust in the last 3 hours',
@@ -33,7 +37,7 @@ city_path = './old/EC_D1D_PLOT/heilongjiang_shp/heilongjiang_city.shp'
 province_path = './old/EC_D1D_PLOT/heilongjiang_shp/'
 manual_time = datetime.datetime(2023, 7, 25, 11)
 forecast_step = 3
-end = 33
+end = 42
 #%%
 cape_reader = GribDataReader (fpath, variable_name[0], manual_time=manual_time, forecast_step=forecast_step, end=end)
 cape,lats, lons = cape_reader.get_data()
