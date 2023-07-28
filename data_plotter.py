@@ -1,7 +1,7 @@
 '''
 Date         : 2023-07-27 16:27:51
 LastEditors  : ChenKt
-LastEditTime : 2023-07-27 16:51:42
+LastEditTime : 2023-07-28 16:14:14
 FilePath     : /elect_visualization/data_plotter.py
 Aim          :
 Mission      :
@@ -27,7 +27,7 @@ plt.rcParams["font.sans-serif"] = ["SimHei"]  # 设置字体
 plt.rcParams["axes.unicode_minus"] = False
 #%%
 class Plotter:
-    def __init__(self, fpath, variable_name,city_path, province_path,variables,  manual_time=None, forecast_step=3, end=75):
+    def __init__(self, fpath, variable_name,city_path, province_path,variables,  manual_time=None, forecast_step=3, end=75, forecast_type='short-term'):
         self.fpath = fpath
         self.variable_name = variable_name
         self.manual_time = manual_time
@@ -36,12 +36,21 @@ class Plotter:
         self.city_path = city_path
         self.province_path = province_path
         self.variables = variables
+        self.forecast_type = forecast_type  #
+    def get_output_file_path(self, variable_name, index, output_prefix):
+        # 获取输出文件路径
+        variable_folder = variable_name.replace(' ', '_')
+        file_name = f'{self.forecast_type}_{str(self.forecast_step)}h_{variable_folder}_{index}.png'
+        output_path = os.path.join(output_prefix, self.forecast_type, variable_folder, file_name)
+        return output_path
 
     def create_subdirectories(self, base_path):
         # 创建子文件夹
         path_dict = dict()
         for variable in self.variables:
-            subdirectory = os.path.join(base_path, variable)
+            # 将变量名中的空格转换为下划线
+            variable_folder = variable.replace(' ', '_')
+            subdirectory = os.path.join(base_path, self.forecast_type, variable_folder)
             path_dict[variable] = subdirectory
             if not os.path.exists(subdirectory):
                 os.makedirs(subdirectory)
@@ -70,9 +79,9 @@ class Plotter:
 
         self.add_map_features (ax)
         if tips == 'colors':
-            a = ax.contourf (lon, lat, data, levels=levels, colors=colormap)
+            a = ax.contourf (lon, lat, data, levels=levels, colors=colormap,extend='max')
         elif tips == 'cmaps':
-            a = ax.contourf (lon, lat, data, levels=levels, cmaps=colormap)
+            a = ax.contourf (lon, lat, data, levels=levels, cmap=colormap,extend='max')
 
         province = cfeature.ShapelyFeature (Reader (self.province_path).geometries (), ccrs.PlateCarree (), edgecolor='k', facecolor='none')
         ax.add_feature (province)
@@ -90,5 +99,6 @@ class Plotter:
         cb = plt.colorbar (a, cax, label=variable_label)
         cb.update_ticks ()
 
-        # plt.savefig (output_file, bbox_inches='tight', pad_inches=0.2)
-        plt.show ()
+        plt.savefig(output_file, bbox_inches='tight', pad_inches=0.2)
+        plt.close()
+        # plt.show()
