@@ -1,7 +1,7 @@
 '''
 Date         : 2023-07-27 16:26:01
 LastEditors  : ChenKt
-LastEditTime : 2023-07-27 19:22:35
+LastEditTime : 2023-07-27 19:40:37
 FilePath     : /elect_visualization/data_reader.py
 Aim          : Read grib data and extract required variables along with their corresponding latitude and longitude information, as well as forecast start and end time.
 Mission      :
@@ -53,7 +53,8 @@ class GribDataReader:
 
     def get_file_names(self, base_time, forecast_steps):
         file_names = []
-        forecast_time0 = base_time + datetime.timedelta(hours=forecast_steps[0])
+        # forecast_time0 = base_time + datetime.timedelta(hours=forecast_steps[0])
+        forecast_time0 = base_time
         folder_name = forecast_time0.strftime("%Y%m%d%H")
         file_name1 = f"sfc_{forecast_time0.strftime('%Y%m%d')}"
         for step in forecast_steps:
@@ -125,7 +126,14 @@ class GribDataReader:
         # 读取每个文件的数据
         data = []
         lats, lons = None, None
-        grbs_list = [pygrib.open(file_path) for file_path in file_names]
+        # grbs_list = [pygrib.open(file_path) for file_path in file_names]
+        grbs_list = []
+        for file_path in file_names:
+            try:
+                grbs_list.append(pygrib.open(file_path))
+            except FileNotFoundError:
+                print(f"文件 {file_path} 不存在。")
+                continue
         for i in range(len(file_names)):
             file_path = file_names[i]
             try:
