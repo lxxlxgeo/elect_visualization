@@ -1,7 +1,7 @@
 '''
 Date         : 2023-07-27 16:26:01
 LastEditors  : ChenKt
-LastEditTime : 2023-07-27 19:40:37
+LastEditTime : 2023-07-28 14:30:44
 FilePath     : /elect_visualization/data_reader.py
 Aim          : Read grib data and extract required variables along with their corresponding latitude and longitude information, as well as forecast start and end time.
 Mission      :
@@ -142,10 +142,12 @@ class GribDataReader:
                         ds_i_plus_1 = grbs_list[i + 1].select(name=self.variable_name)[0]
                         ds_i = grbs_list[i].select(name=self.variable_name)[0]
                         # 获取gribmessage对象的值
-                        ds_i_plus_1_values = ds_i_plus_1.data(lat1=latS, lat2=latN, lon1=lonL, lon2=lonR)[0].values * 1000
-                        ds_i_values = ds_i.data(lat1=latS, lat2=latN, lon1=lonL, lon2=lonR)[0].values * 1000
+                        ds_i_plus_1_values = ds_i_plus_1.data(
+                            lat1=latS, lat2=latN, lon1=lonL, lon2=lonR)[0]
+                        ds_i_values = ds_i.data(
+                            lat1=latS, lat2=latN, lon1=lonL, lon2=lonR)[0]
                         # 进行减法运算
-                        ds_diff = ds_i_plus_1_values - ds_i_values
+                        ds_diff = (ds_i_plus_1_values - ds_i_values)*1000
                         data.append(ds_diff)
                         if lats is None or lons is None:
                             lats, lons = ds_i.data(lat1=latS, lat2=latN, lon1=lonL, lon2=lonR)[1:3]

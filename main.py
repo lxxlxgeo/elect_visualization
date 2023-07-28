@@ -1,7 +1,7 @@
 '''
 Date         : 2023-07-26 16:13:18
 LastEditors  : ChenKt
-LastEditTime : 2023-07-27 19:30:24
+LastEditTime : 2023-07-28 14:34:40
 FilePath     : /elect_visualization/main.py
 Aim          :
 Mission      :
@@ -35,7 +35,7 @@ variable_name_Zh = ['对流有效位能',
                     ]
 city_path = './old/EC_D1D_PLOT/heilongjiang_shp/heilongjiang_city.shp'
 province_path = './old/EC_D1D_PLOT/heilongjiang_shp/'
-manual_time = datetime.datetime(2023, 7, 25, 11)
+manual_time = datetime.datetime(2023, 7, 25, 17)
 forecast_step = 3
 end = 42
 #%%
@@ -45,11 +45,11 @@ forecast_start_time=cape_reader.base_time_str
 forecast_end_time=cape_reader.forecast_time_str
 #%%
 tp_reader = GribDataReader (fpath, variable_name[1], manual_time=manual_time, forecast_step=forecast_step, end=end)
-tp,_, _ = cape_reader.get_data()
+tp,_, _ = tp_reader.get_data()
 # forecast_start_time=cape_reader.base_time_str
 # forecast_end_time=cape_reader.forecast_time_str
 windspeed_reader = GribDataReader (fpath, variable_name[2], manual_time=manual_time, forecast_step=forecast_step, end=end)
-windspeed,_, _ = cape_reader.get_data()
+windspeed,_, _ = windspeed_reader.get_data()
 
 # data_reader = GribDataReader (fpath, variable_name[1], manual_time=manual_time, forecast_step=forecast_step, end=end)
 # data,lats, lons = data_reader.get_data()
@@ -57,11 +57,11 @@ windspeed,_, _ = cape_reader.get_data()
 # forecast_end_time=data_reader.forecast_time_str
 
 #%%
-plotter = Plotter(fpath, variable_name[1], city_path=city_path,variables=variable_name ,province_path=province_path)
+
 #%%
 for i in range(0, len(cape) - 1):
     levels=[0, 0.1, 1, 3, 10, 20, 50, 70]
-
+    plotter = Plotter(fpath, variable_name[0], city_path=city_path,variables=variable_name ,province_path=province_path)
     titles = f"{forecast_start_time[i]}-{forecast_end_time[i]}黑龙江省{variable_name_Zh[0]}预报图"
     output_file = f'./output_file_rainfall_'+str(forecast_step)+'h_{i}.png'
     plotter.plot_contour_map(lats, lons, cape[i],
@@ -72,6 +72,7 @@ for i in range(0, len(cape) - 1):
                              output_file=output_file,
                              tips='cmaps')
     del titles,output_file
+    plotter = Plotter(fpath, variable_name[1], city_path=city_path,variables=variable_name ,province_path=province_path)
     levels=[0, 0.1, 1, 3, 10, 20, 50, 70]
     color = ('#FFFFFF', '#A6F28F', '#3DBA3D', '#61BBFF', '#0000FF', '#FA00FA', '#800040')
     titles = f"{forecast_start_time[i]}-{forecast_end_time[i]}黑龙江省{variable_name_Zh[1]}预报图"
@@ -85,7 +86,7 @@ for i in range(0, len(cape) - 1):
                              tips='colors')
     del titles,output_file
 
-
+    plotter = Plotter(fpath, variable_name[2], city_path=city_path,variables=variable_name ,province_path=province_path)
     titles = f"{forecast_start_time[i]}-{forecast_end_time[i]}黑龙江省{variable_name_Zh[2]}预报图"
     output_file = f'./output_file_rainfall_'+str(forecast_step)+'h_{i}.png'
     plotter.plot_contour_map(lats, lons, tp[i],
@@ -97,5 +98,3 @@ for i in range(0, len(cape) - 1):
                              output_file=output_file,
                              tips='cmaps')
     del titles,output_file
-
-# %%
