@@ -4,26 +4,7 @@ import os,re
 import pygrib
 import numpy as np
 from .configure import lonL,lonR,latS,latN   #从配置文件py里获取范围
-#fpath = '/mnt/d/kt/project/yl/2023-HLJIEE-MicroMeteorologicalServices/ECMWF/C1D-grib/'
-# fpath='/share/Datasets/ECMWF/C1D-grib'  #这段有用吗？？
-#
-# latS = 42.0
-# latN = 55.0
-# lonL = 120.0
-# lonR = 135.5
-# variable_name = ['Convective available potential energy',
-#                  'Total precipitation',
-#                  '10 metre wind gust in the last 3 hours',
-#                  '10 metre wind gust in the last 6 hours'
-#                  ]
-# variable_name_Zh = ['对流有效位能',
-#                     '降水量',
-#                     '最大风速'
-#                     ]
-#
-# manual_time = datetime.datetime(2023, 7, 25, 11)
-# forecast_step = 3
-# end = 42
+
 class GribDataReader:
     def __init__(self, fpath, variable_name,forecast_type,forecast_type_tips,manual_time=None, forecast_step=3, end=75,):
         self.fpath = fpath
@@ -35,13 +16,40 @@ class GribDataReader:
         self.end = end
 
     def get_forecast_steps(self, hour):
-        if hour == 11 or hour == 23:
-            return list(range(0, self.end, self.forecast_step))
-            print(range(0, self.end, self.forecast_step))
-        elif hour == 17 or hour == 5:
-            #return list(range(9, self.end, self.forecast_step))
-            print(list(range(12, self.end, self.forecast_step)))
-            return list(range(12, self.end, self.forecast_step))
+        # UTC 00时数据到达时间为 UTC 8时到
+        #UTC 12时的数据为 UTC20 时到
+        # 运行时间 05,11,17,23
+        # 换算成UTC 为 05 ----> -1天 为前一天的21点运行
+        # 11换算成UTC 为 3 点运行
+        # 17 换算成UTC 为 09 时运行
+        # 23 换算成 UTC 为 15时运行
+        #暂定重写此部分
+        # if hour==11:
+        #     #北京时间11时运行，UTC为03时
+        #     return list(range(7,self.end,self.forecast_step))
+        # elif hour==5:
+        #     return list(range(1,self.end,self.forecast_step))
+        # elif hour==17:
+        #     return  list(range(9,self.end,self.forecast_step))
+        # elif hour==23:
+        #     return  list(range(15,self.forecast_step,self.forecast_step))
+        if self.forecast_type=='imminent':
+            if hour==5:
+                return list(1,self.end,self.forecast_step)
+            elif hour==11:
+                return list(7,self.end,self.forecast_step)
+            elif hour==17:
+                return list(1,self.end,self.forecast_step)
+            elif hour==23:
+                return list(7,self.end,self.forecast_step)
+        else:
+            if hour == 11 or hour == 23:
+                return list(range(0, self.end, self.forecast_step))
+                print(range(0, self.end, self.forecast_step))
+            elif hour == 17 or hour == 5:
+                #return list(range(9, self.end, self.forecast_step))
+                print(list(range(12, self.end, self.forecast_step)))
+                return list(range(12, self.end, self.forecast_step))
         return None
 
     def get_base_time(self, current_time, forecast_hour):
