@@ -1,13 +1,7 @@
 # -*- coding: utf-8 -*-
-
-"""
-Date         : 2023-07-26 16:13:18
-LastEditors  : ChenKt
-LastEditTime : 2023-07-28 16:25:04
-FilePath     : /elect_visualization/main.py
-Aim          :
-Mission      :
-"""
+'''
+此程序是中期预报出图程序
+'''
 # %%
 import datetime
 from data_reader import GribDataReader
@@ -15,8 +9,6 @@ from data_plotter import Plotter
 import numpy as np
 import cmaps
 import os
-
-# %%
 
 # %%
 #fpath = "/mnt/d/kt/project/yl/2023-HLJIEE-MicroMeteorologicalServices/ECMWF/C1D-grib/"
@@ -47,7 +39,7 @@ variabale_name_english_sort=['cp','pre','wins']
 city_path = "./old/EC_D1D_PLOT/heilongjiang_shp/heilongjiang_city.shp"
 province_path = "./old/EC_D1D_PLOT/heilongjiang_shp/"
 
-manual_time = datetime.datetime(2023, 7, 29,5)  # 手动运行时指定的起报时刻（utc-8）
+manual_time = datetime.datetime(2023, 7, 31,17)  # 手动运行时指定的起报时刻（utc-8）
 # 中期天气预报 24 小时间隔
 forecast_step = 24
 end = 220
@@ -118,7 +110,6 @@ for i in range(0, len(tp) - 1):
     output_file = plotter.get_output_file_path(variable_name[0], i, output_prefix,filename)
     #print(filename.encode())
     subdirectories = plotter.create_subdirectories(output_prefix)  # 创建中期，短期，短临 文件夹
-    
     #重新创建  
     for subdirectory in subdirectories.values():
         os.makedirs(subdirectory, exist_ok=True)
@@ -135,6 +126,8 @@ for i in range(0, len(tp) - 1):
         tips="cmaps",
     )
     del titles, output_file
+
+    #降水量出图
     levelsduanlin= [0, 0.1, 1, 3, 10, 20, 50, 70]
     levels=[0, 0.1, 10, 25, 50, 100, 250, 500]
     plotter = Plotter(

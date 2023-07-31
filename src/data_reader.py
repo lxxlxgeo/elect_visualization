@@ -1,40 +1,34 @@
 # -*- coding: utf-8 -*-
-'''
-Date         : 2023-07-27 16:26:01
-LastEditors: error: error: git config user.name & please set dead value or install git && error: git config user.email & please set dead value or install git & please set dead value or install git
-LastEditTime: 2023-07-31 18:54:14
-FilePath     : /elect_visualization/data_reader.py
-Aim          : Read grib data and extract required variables along with their corresponding latitude and longitude information, as well as forecast start and end time.
-Mission      :
-'''
 import datetime
 import os,re
 import pygrib
 import numpy as np
+from .configure import lonL,lonR,latS,latN   #从配置文件py里获取范围
 #fpath = '/mnt/d/kt/project/yl/2023-HLJIEE-MicroMeteorologicalServices/ECMWF/C1D-grib/'
-fpath='/share/Datasets/ECMWF/C1D-grib'
-
-latS = 42.0
-latN = 55.0
-lonL = 120.0
-lonR = 135.5
-variable_name = ['Convective available potential energy',
-                 'Total precipitation',
-                 '10 metre wind gust in the last 3 hours',
-                 '10 metre wind gust in the last 6 hours'
-                 ]
-variable_name_Zh = ['对流有效位能',
-                    '降水量',
-                    '最大风速'
-                    ]
-
-manual_time = datetime.datetime(2023, 7, 25, 11)
-forecast_step = 3
-end = 42
+# fpath='/share/Datasets/ECMWF/C1D-grib'  #这段有用吗？？
+#
+# latS = 42.0
+# latN = 55.0
+# lonL = 120.0
+# lonR = 135.5
+# variable_name = ['Convective available potential energy',
+#                  'Total precipitation',
+#                  '10 metre wind gust in the last 3 hours',
+#                  '10 metre wind gust in the last 6 hours'
+#                  ]
+# variable_name_Zh = ['对流有效位能',
+#                     '降水量',
+#                     '最大风速'
+#                     ]
+#
+# manual_time = datetime.datetime(2023, 7, 25, 11)
+# forecast_step = 3
+# end = 42
 class GribDataReader:
-    def __init__(self, fpath, variable_name, manual_time=None, forecast_step=3, end=75):
+    def __init__(self, fpath, variable_name,forecast_type,manual_time=None, forecast_step=3, end=75,):
         self.fpath = fpath
         self.variable_name = variable_name
+        self.forecast_type=forecast_type
         self.manual_time = manual_time
         self.forecast_step = forecast_step
         self.end = end
@@ -103,6 +97,7 @@ class GribDataReader:
                 continue
 
         return base_times, forecast_times
+
     def get_time_str_mdH(self, base_time, forecast_steps):
         base_times = []
         forecast_times = []
@@ -225,21 +220,25 @@ class GribDataReader:
                     else:
                         print(f"文件 {file_path} 是最后一个文件，无法计算差分。")
                 else:
-                    if i < len(grbs_list) - 1:
-                        #print(len(grbs_list))
-                        #print(self.variable_name)
-                        current_file=file_names[i+1]
-                        
-                        filelist=get_all_files_tocalc_avg(current_file)
-                        
-                        
-                        ds_i_values,lats,lons=avg_files(filelist,self.variable_name,lats,lons,latS,latN,lonL,lonR)
-                        # ds_i = grbs_list[i + 1].select(name=self.variable_name)[0]
-                        # #print(grbs_list)
-                        # ds_i_values = ds_i.data(lat1=latS, lat2=latN, lon1=lonL, lon2=lonR)[0]
-                        data.append(ds_i_values)
-                        # if lats is None or lons is None:
-                        #     lats, lons = ds_i.data(lat1=latS, lat2=latN, lon1=lonL, lon2=lonR)[1:3]
+                    if self.forecast_type=='imminent':
+                        ds_i=grbs_list[i].select(name=self.variable_name)[0]
+                        s_i_values = ds_i.data (lat1=latS, lat2=latN, lon1=lonL, lon2=lonR)[0]
+                        data.append(s_i_values)
+                        if lats is None or lons is None:
+                            lats, lons = ds_i.data(lat1=latS, lat2=latN, lon1=lonL, lon2=lonR)[1:3]
+                    else:
+                        if i < len(grbs_list) - 1:
+                            #print(len(grbs_list))
+                            #print(self.variable_name)
+                            current_file=file_names[i+1]
+                            filelist=get_all_files_tocalc_avg(current_file)
+                            ds_i_values,lats,lons=avg_files(filelist,self.variable_name,lats,lons,latS,latN,lonL,lonR)
+                            # ds_i = grbs_list[i + 1].select(name=self.variable_name)[0]
+                            # #print(grbs_list)
+                            # ds_i_values = ds_i.data(lat1=latS, lat2=latN, lon1=lonL, lon2=lonR)[0]
+                            data.append(ds_i_values)
+                            # if lats is None or lons is None:
+                            #     lats, lons = ds_i.data(lat1=latS, lat2=latN, lon1=lonL, lon2=lonR)[1:3]
             except FileNotFoundError:
                 print(f"文件 {file_path} 不存在。")
                 continue
@@ -247,6 +246,8 @@ class GribDataReader:
         # 获取预报起始时刻和预报时刻滞后step个小时的时间字符串列表
         self.base_time_str, self.forecast_time_str = self.get_time_strings(base_time, forecast_steps)
         self.base_time_str_mdH,self.forecast_time_str_mdH=self.get_time_str_mdH(base_time,forecast_steps)
+        self.base_time_str_YmdH,self.forecast_time_str_YmdH=self.get_time_str_YmdH(base_time,forecast_steps)
+
         return data, lats, lons
     
     

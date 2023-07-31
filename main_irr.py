@@ -7,15 +7,6 @@ LastEditTime : 2023-07-28 16:25:04
 FilePath     : /elect_visualization/main.py
 Aim          :
 Mission      :
-"""# -*- coding: utf-8 -*-
-
-"""
-Date         : 2023-07-26 16:13:18
-LastEditors  : ChenKt
-LastEditTime : 2023-07-28 16:25:04
-FilePath     : /elect_visualization/main.py
-Aim          :
-Mission      :
 """
 # %%
 import datetime
@@ -24,9 +15,6 @@ from data_plotter import Plotter
 import numpy as np
 import cmaps
 import os
-
-# %%
-
 # %%
 #fpath = "/mnt/d/kt/project/yl/2023-HLJIEE-MicroMeteorologicalServices/ECMWF/C1D-grib/"
 fpath='/share/Datasets/ECMWF/C1D-grib'
@@ -190,9 +178,6 @@ for i in range(0, len(tp) - 1):
     del titles, output_file
 
 # %%
-#levels=np.arange(0,35,2)
-
-# %%
 import datetime
 from data_reader import GribDataReader
 from data_plotter import Plotter
@@ -263,9 +248,6 @@ windspeed_reader = GribDataReader(
     fpath, variable_name[2], manual_time=manual_time, forecast_step=forecast_step, end=end
 )
 windspeed, _, _ = windspeed_reader.get_data()
-
-
-# %%
 
 # %%
 for i in range(0, len(tp) - 1):
@@ -365,6 +347,3 @@ for i in range(0, len(tp) - 1):
         tips="cmaps",
     )
     del titles, output_file
-
-# %%
-#levels=np.arange(0,35,2)
