@@ -25,10 +25,11 @@ from .configure import lonL,lonR,latS,latN   #从配置文件py里获取范围
 # forecast_step = 3
 # end = 42
 class GribDataReader:
-    def __init__(self, fpath, variable_name,forecast_type,manual_time=None, forecast_step=3, end=75,):
+    def __init__(self, fpath, variable_name,forecast_type,forecast_type_tips,manual_time=None, forecast_step=3, end=75,):
         self.fpath = fpath
         self.variable_name = variable_name
         self.forecast_type=forecast_type
+        self.forecast_type_tips=forecast_type_tips
         self.manual_time = manual_time
         self.forecast_step = forecast_step
         self.end = end
@@ -161,7 +162,7 @@ class GribDataReader:
                 print(f"文件 {file_path} 不存在。")
                 continue
 
-        return base_times, forecast_times
+        return (base_time+ datetime.timedelta(hours=8)).strftime('%Y%m%d%H')
     def get_data(self):
         # 获取当前的东八区时间
         current_time = datetime.datetime.utcnow() + datetime.timedelta(hours=8)
@@ -196,7 +197,7 @@ class GribDataReader:
         for file_path in file_names:
             try:
                 grbs_list.append(pygrib.open(file_path))
-                print(file_path)
+                print(file_path,' 文件已读取')
             except FileNotFoundError:
                 print(f"文件 {file_path} 不存在。")
                 continue
@@ -220,16 +221,16 @@ class GribDataReader:
                     else:
                         print(f"文件 {file_path} 是最后一个文件，无法计算差分。")
                 else:
-                    if self.forecast_type=='imminent':
-                        ds_i=grbs_list[i].select(name=self.variable_name)[0]
-                        s_i_values = ds_i.data (lat1=latS, lat2=latN, lon1=lonL, lon2=lonR)[0]
-                        data.append(s_i_values)
-                        if lats is None or lons is None:
-                            lats, lons = ds_i.data(lat1=latS, lat2=latN, lon1=lonL, lon2=lonR)[1:3]
-                    else:
-                        if i < len(grbs_list) - 1:
-                            #print(len(grbs_list))
-                            #print(self.variable_name)
+
+                    if i<len(grbs_list)-1:
+                        if self.forecast_type_tips=='imminent':
+                            ds_i=grbs_list[i+1].select(name=self.variable_name)[0]
+                            s_i_values = ds_i.data (lat1=latS, lat2=latN, lon1=lonL, lon2=lonR)[0]
+                            data.append(s_i_values)
+                            if lats is None or lons is None:
+                                lats, lons = ds_i.data(lat1=latS, lat2=latN, lon1=lonL, lon2=lonR)[1:3]
+                        else:
+                            # maximum synthesis
                             current_file=file_names[i+1]
                             filelist=get_all_files_tocalc_avg(current_file)
                             ds_i_values,lats,lons=avg_files(filelist,self.variable_name,lats,lons,latS,latN,lonL,lonR)
@@ -246,7 +247,7 @@ class GribDataReader:
         # 获取预报起始时刻和预报时刻滞后step个小时的时间字符串列表
         self.base_time_str, self.forecast_time_str = self.get_time_strings(base_time, forecast_steps)
         self.base_time_str_mdH,self.forecast_time_str_mdH=self.get_time_str_mdH(base_time,forecast_steps)
-        self.base_time_str_YmdH,self.forecast_time_str_YmdH=self.get_time_str_YmdH(base_time,forecast_steps)
+        self.base_time_str_YmdH=self.get_time_str_YmdH(base_time,forecast_steps)
 
         return data, lats, lons
     

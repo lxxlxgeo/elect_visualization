@@ -78,6 +78,7 @@ def generate_color_conf():
 '''
 #fpath='/share/Datasets/ECMWF/C1D-grib'
 fpath='G:/js_elect/ECFile/ecode'
+output_prefix='G:/js_elect/ECFile/ECvisual'
 
 
 # 将当前时间获,并转换为触发时间
@@ -94,5 +95,4 @@ def convert_BTJ():
         return datetime.datetime(year,month,day,17)
     else:
         return datetime.datetime(year,month,day,5)
-
 

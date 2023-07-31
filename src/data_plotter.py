@@ -30,7 +30,7 @@ plt.rcParams["axes.unicode_minus"] = False
 
 #%%
 class Plotter:
-    def __init__(self, fpath, variable_name,variables,ticks,forecast_path_str, manual_time=None, forecast_step=3, end=75, forecast_type='short-term'):
+    def __init__(self, fpath, variable_name,variables,ticks,forecast_path_str,manual_time=None, forecast_step=3, end=75, forecast_type='short-term'):
         '''
         :param fpath: 没搞懂这是啥
         :param variable_name: 变量名称
@@ -55,6 +55,7 @@ class Plotter:
         self.ticks=ticks
         self.forecast_path_str=forecast_path_str
 
+
         #行政区矢量位置
 
         self.city_path='./share/region/heilongjiang_shp/heilongjiang_city.shp'
@@ -71,7 +72,7 @@ class Plotter:
     # todo:  完成文件夹的创建
     def get_output_file_path(self, variable_name, index, output_prefix,file_name):
         # 获取输出文件路径
-        variable_folder = variable_name.replace(' ', '_')
+        variable_folder = variable_name
         #file_name = f'{self.forecast_type}_{str(self.forecast_step)}h_{variable_folder}_{index}.png'
         output_path = os.path.join(output_prefix, self.forecast_type,self.forecast_path_str, variable_folder, file_name)
         #output_path=output_path.encode("utf-8").decode('utf-8')
