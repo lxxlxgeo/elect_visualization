@@ -22,7 +22,7 @@ class Forecast_Product_Info(Base):
     #pk
     forecast_type=Column(VARCHAR(50),doc="预报类型",comment="预报的类型,是短临还是短期，中期")
 
-    #统计区域的级别,分省级和市级，省级包括 黑龙江中部，黑龙江南部 等，市级包括 哈尔滨中部，哈尔滨南部等 分2级
+    #统计区域的级别,分省级和市级，省级包括 黑龙江中部，黑龙江南部 等，市级包括 哈尔滨中部，哈尔滨南部等
     #pk
     region_level=Column(VARCHAR(50),doc="出图的区域级别,省级和市级",comment="出图的区域级别")
 
@@ -35,8 +35,8 @@ class Forecast_Product_Info(Base):
     #pk
     forecast_step=Column(VARCHAR(50),doc="预报的步长",comment="预报步长")
 
-    #短临小时气象要素标识，这里如果不是短临小时气象要素，则标记为0，如果是，则标记为1,是否是小时雨强
-    #
+    #短临小时气象要素标识，这里如果不是短临小时气象要素，则标记为0，如果是，则标记为1
+    #报告类型 短临 1，短期 2 ，中期 3
     #pk
     forecast_imminent_tag=Column(INT,doc="短临小时气象标注",comment="短临小时气象要素标注")
     #初始场时间
@@ -62,10 +62,6 @@ class Forecast_Product_Info(Base):
     #统计区域的平均值
     pre_avg=Column(FLOAT,doc="降水平均值",comment="降水平均值")
 
-    #todo: 需要加上每个要素的最小值
-
-    #todo: 小时降水量
-
     #风速
     #风速最大值
     wind_max=Column(FLOAT,doc="风速最大值",comment="风速最大值")
@@ -81,10 +77,31 @@ class Forecast_Product_Info(Base):
     #位能平均值
     cape_avg=Column(FLOAT,doc="位能平均值",comment="位能平均值")
 
-    #降水量添加每个等级所占的比例:
 
+    #降水量等
+    pre_level_0=Column(FLOAT,doc="无降水所占比例",comment="无降水所占比例")  #0-1区间
 
-    #
+    pre_level_1=Column(FLOAT,doc="小雨所占比例",comment="小雨所占比例")
+
+    pre_level_2=Column(FLOAT,doc="中雨所占比例",comment="中雨所占比例")
+
+    pre_level_3=Column(FLOAT,doc="大雨所占比例",comment="大雨所占比例")
+
+    pre_level_4=Column(FLOAT,doc="暴雨所占比例",comment="暴雨所占比例")
+
+    pre_level_5=Column(FLOAT,doc="大暴雨所占比例",comment="大暴雨所占比例")
+
+    pre_level_6=Column(FLOAT,doc="特大暴雨所占比例",comment="特大暴雨所占比例")
+
+    #位能所占比例设置
+
+    cape_low_risk=Column(FLOAT,doc="位能低风险所占比例",comment="位能低风险所占比例")
+    cape_high_risk=Column(FLOAT,doc="位能高风险所占比例",comment="位能高风险所占比例")
+
+    #风速所占比例
+    wins_strong_prop=Column(FLOAT,doc="大风所占比例",comment="大风所占比例")
+    wins_small_prop=Column(FLOAT,doc="小风所占比例",comment="小风所占比例")
+
     #
     forecast_exec_time=Column(DATETIME,doc="执行时间",comment="执行时间")
 
