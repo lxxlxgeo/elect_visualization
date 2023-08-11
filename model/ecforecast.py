@@ -77,7 +77,31 @@ class Forecast_Product_Info(Base):
     #位能平均值
     cape_avg=Column(FLOAT,doc="位能平均值",comment="位能平均值")
 
-    #降水量
+
+    #降水量等
+    pre_level_0=Column(FLOAT,doc="无降水所占比例",comment="无降水所占比例")  #0-1区间
+
+    pre_level_1=Column(FLOAT,doc="小雨所占比例",comment="小雨所占比例")
+
+    pre_level_2=Column(FLOAT,doc="中雨所占比例",comment="中雨所占比例")
+
+    pre_level_3=Column(FLOAT,doc="大雨所占比例",comment="大雨所占比例")
+
+    pre_level_4=Column(FLOAT,doc="暴雨所占比例",comment="暴雨所占比例")
+
+    pre_level_5=Column(FLOAT,doc="大暴雨所占比例",comment="大暴雨所占比例")
+
+    pre_level_6=Column(FLOAT,doc="特大暴雨所占比例",comment="特大暴雨所占比例")
+
+    #位能所占比例设置
+
+    cape_low_risk=Column(FLOAT,doc="位能低风险所占比例",comment="位能低风险所占比例")
+    cape_high_risk=Column(FLOAT,doc="位能高风险所占比例",comment="位能高风险所占比例")
+
+    #风速所占比例
+    wins_strong_prop=Column(FLOAT,doc="大风所占比例",comment="大风所占比例")
+    wins_small_prop=Column(FLOAT,doc="小风所占比例",comment="小风所占比例")
+
     #
     forecast_exec_time=Column(DATETIME,doc="执行时间",comment="执行时间")
 

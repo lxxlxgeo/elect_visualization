@@ -42,6 +42,9 @@ class GribDataReader:
             #return list(range(9, self.end, self.forecast_step))
             print(list(range(12, self.end, self.forecast_step)))
             return list(range(12, self.end, self.forecast_step))
+        elif hour==20:
+            return list(range(48,self.end,self.forecast_step))
+        #forecast_step 改为36
         return None
 
     def get_base_time(self, current_time, forecast_hour):
