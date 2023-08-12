@@ -12,6 +12,8 @@ import datetime
 import xarray as xr
 from un_config.rldas_configl import rldas_path,extent
 # from wrf import ??
+from wrf import (getvar)
+
 
 #%%
 class RlDas_Reader(object):
