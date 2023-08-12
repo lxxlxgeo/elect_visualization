@@ -51,7 +51,7 @@ class RlDas_Reader(object):
                 time_list.append(item_time)
             return time_list
 
-    def __get_files_from_time_(self):
-  
+    def __get_files_from_time_(self,fore):
+
         pass
 
