@@ -16,6 +16,10 @@ from wrf import (getvar)
 
 
 #%%
+
+"""
+RLDAS 模式数据读取,这里先改写一下:读取要素时初始化类还是直接从函数里获取????
+"""
 class RlDas_Reader(object):
     def __init__(self, start_time, end_time, step):
         # 开始时间
