@@ -11,9 +11,8 @@ from glob import glob
 import datetime
 import xarray as xr
 from un_config.rldas_configl import rldas_path,extent
-# from wrf import ??
-from wrf import (getvar)
-
+from wrf import (get_cartopy, latlon_coords, to_np, cartopy_xlim, cartopy_ylim,
+                 getvar, ALL_TIMES)
 
 #%%
 
@@ -68,9 +67,10 @@ class RlDas_Reader(object):
             # 如果输入的变量为降水,则获取的文件为 前一时刻的降水量
             pre_forecast_time_str=forecast_time+datetime.timedelta(hours=-self.step)
 
+
         else:
             #新建一个列表,里面存储检索到的文件
-            file_list=[]
+            file_list = []
             for i in range(self.step):
                 # 暂时先这样吧,以后再改
                 temp_time_str = (forecast_time + datetime.timedelta(hours=i + 1)).strftime('%Y%m%d%H')
@@ -86,7 +86,7 @@ class RlDas_Reader(object):
 def get_rldas_path_from_time(forecast_time):
     pass
 
-def composite(data_array,method):
+def composite(files,method):
     stack_data_array=np.array([],dtype=np.float32)
     if method=='sum':
         pass
