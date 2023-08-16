@@ -1,6 +1,6 @@
 from Engine import GetSession
 from ecforecast import Forecast_Product_Info
-from src.configure import latS,latN,lonL,lonR
+#from src.configure import latS,latN,lonL,lonR
 
 
 heilongjiang_provin='./share/'

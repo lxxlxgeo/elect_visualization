@@ -10,10 +10,10 @@ rldas_path = '/share/data/WRF-RLDAS-Heilongjiang'
 
 map_extent = [120.0, 135.5, 42.0, 55.0]
 
-output_prefix = '/share/data/pic_heilongjiang/scene'
+output_prefix = '/share/data/pic_heilongjiang/RLDAS_WRF'
 
 
-def generate_color_conf():
+def generate_plot_config(step: int) -> dict:
     pre_mid_level = [0, 0.1, 10, 25, 50, 100, 250, 500]  # 短期或中期降水量拉伸
     pre_mid_ticks = [0.1, 10, 25, 50, 100, 250]  # 短期或中期降水刻度
     cape_mid_level = np.arange(200, 4001, 200)  # 短期或中期位能拉伸
@@ -35,4 +35,8 @@ def generate_color_conf():
     imminent_color_conf['pre_ticks'] = pre_imminent_ticks
     imminent_color_conf['cape_level'] = cape_imminent_level
     imminent_color_conf['wins_level'] = wins_imminent_level
-    return mid_short_color_conf, imminent_color_conf
+
+    if step == 3:
+        return imminent_color_conf
+    elif step == 24:
+        return mid_short_color_conf

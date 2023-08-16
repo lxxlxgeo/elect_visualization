@@ -189,3 +189,22 @@ class Plotter:
         # plt.close()
         # plt.show()
         plt.close()
+
+
+class Weather_Plotter(object):
+    """
+    新的 RLDAS,ECMWF 可视化类
+    """
+
+    def __init__(self):
+        pass
+
+    def init_plot(self):
+        """
+        初始化 AXES
+        :return:
+        """
+        pass
+
+    def add_map_geometry(self):
+        pass
