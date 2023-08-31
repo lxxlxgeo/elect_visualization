@@ -23,7 +23,7 @@ class Forecast_Product_Info(Base):
     forecast_type=Column(VARCHAR(50),doc="预报类型",comment="预报的类型,是短临还是短期，中期")
 
     #统计区域的级别,分省级和市级，省级包括 黑龙江中部，黑龙江南部 等，市级包括 哈尔滨中部，哈尔滨南部等
-    #pk
+    #pk region_level: 1 为省级,2为省级区域,3为地级市,4为地级市区域,5为县区
     region_level=Column(VARCHAR(50),doc="出图的区域级别,省级和市级",comment="出图的区域级别")
 
     #区域
@@ -99,8 +99,20 @@ class Forecast_Product_Info(Base):
     cape_high_risk=Column(FLOAT,doc="位能高风险所占比例",comment="位能高风险所占比例")
 
     #风速所占比例
-    wins_strong_prop=Column(FLOAT,doc="大风所占比例",comment="大风所占比例")
-    wins_small_prop=Column(FLOAT,doc="小风所占比例",comment="小风所占比例")
+    #
+
+    # 风速 1-9 ,排序9-1
+
+
+    wins_level9 = Column(FLOAT,doc="9级风速所占比例",comment="9级风速所占比例")
+    wins_level8 = Column(FLOAT, doc="8级风速所占比例", comment="8级风速所占比例")
+    wins_level7 = Column(FLOAT, doc="7级风速所占比例", comment="7级风速所占比例")
+    wins_level6 = Column(FLOAT, doc="6级风速所占比例", comment="6级风速所占比例")
+    wins_level5 = Column(FLOAT, doc="5级风速所占比例", comment="5级风速所占比例")
+    wins_level4 = Column(FLOAT, doc="4级风速所占比例", comment="4级风速所占比例")
+    wins_level3 = Column(FLOAT, doc="3级风速所占比例", comment="3级风速所占比例")
+    wins_level2 = Column(FLOAT, doc="2级风速所占比例", comment="2级风速所占比例")
+    wins_level1 = Column(FLOAT, doc="1级风速所占比例", comment="1级风速所占比例")
 
     #
     forecast_exec_time=Column(DATETIME,doc="执行时间",comment="执行时间")
