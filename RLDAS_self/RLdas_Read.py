@@ -35,25 +35,34 @@ class RlDas_Reader(object):
 
         self.forecast_time_list = self.__get_forecast_time_list__()  # 获取时间序列
         self.__get__wrf_files_info()
+        #print(self.all_files)
 
     def __get__wrf_files_info(self):
         # 这里的时间需要再改一下，如果预报时间不是当前文件夹内部的时间,则去遍历子文件夹下面的子文件夹.
 
-        # time_now=datetime.datetime.utcnow()+datetime.timedelta(hours=8)
-        # d_time=time_now-self.start_time
-        # d_hours=d_time.days*24+d_time.seconds/3600
+        time_now=datetime.datetime.utcnow()+datetime.timedelta(hours=8)
+        d_time=time_now-self.start_time
+        d_hours=d_time.days*24+d_time.seconds/3600
+        
+        if d_hours>24:
+            self.start_time
+        
+        
+        
         hours = self.start_time.hour
         # print(hours)
-        if (hours > 16) & (hours < 4):
+        if (hours > 16)| (hours < 4):
             subpath = 'wrfoutput-ldas-2km-2nests-00h'
             full_path = os.path.join(self.filepath, subpath)
 
-        elif hours < 12:
+        elif (hours >4)&(hours<=16):
             subpath = 'wrfoutput-ldas-2km-2nests'
             full_path = os.path.join(self.filepath, subpath)
         else:
             print("时间错误")
         self.all_files = glob(full_path + '/wrfout_d02_*')
+        #print(self.all_files)
+        
 
     def __get__init_field_info__(self):
         # 这里先提交第一版:主要先从所有文件夹里获取任意一个文件把经纬度和坐标读出来,其他信息另说
@@ -114,6 +123,7 @@ class RlDas_Reader(object):
             forecast_start_time_str = forecast_time.strftime("%Y-%m-%d_%H")
             # print("开始时刻:"+forecast_start_time_str)
             forecast_end_time_str = (forecast_time + datetime.timedelta(hours=self.step)).strftime("%Y-%m-%d_%H")
+            #print(forecast_end_time_str)
             # print("结束时刻:{}".format(forecast_end_time_str))
             start_file = [x for x in self.all_files if re.search(forecast_start_time_str, x)][0]
             end_file = [x for x in self.all_files if re.search(forecast_end_time_str, x)][0]
@@ -175,15 +185,29 @@ def composite_other_var(files, attribute, method):
     :param method: 合成方法
     :return: 返回一个数组序列
     """
-    stack_array = np.array([], dtype=np.float32)
+    print("其他要素处理")
+    stack_array = np.array([], dtype=np.float32,copy=False)
     for file in files:
         ds = Dataset(file)
+        
         data_array = getvar(ds, attribute, timeidx=ALL_TIMES).values
+        print(file,'已读取')
+        if attribute=='wspd_wdir10':
+            data_array=data_array[0]
+            print(data_array.shape,"读取后的纬度")
+        elif attribute=='cape_2d':
+            data_array=data_array[0]
+            print("读取后的维度",data_array.shape)
+        else:
+            print('属性错误')
+        #data_array=data_array.mean(axis=0)
         if len(stack_array) == 0:
             stack_array = data_array
+            #print(stack_array.shape)
         else:
             stack_array = np.dstack((stack_array, data_array))
         ds.close()
+    #print(stack_array.shape)
     if method == 'max':
         result_array = np.nanmax(stack_array, axis=2)
         return result_array
