@@ -4,7 +4,7 @@ save_data_on_exit = True
 save_history = True
 save_non_project_files = False
 project_type = 'empty-project-type'
-recent_files = ['old\\EC_D1D_PLOT\\plot_ecmwf_cape.py', 'src\\plot_ecmwf_cape_tp_windspeed.py', 'src\\utils.py', 'old\\EC_D1D_PLOT\\plot_ecmwf_tp_3hour.py', 'src\\var.py', 'old\\EC_D1D_PLOT\\plot_ecmwf_tp_24hour.py', 'old\\EC_D1D_PLOT\\plot_ecmwf_wind_3hour.py', 'src\\units.py']
+recent_files = []
 
 [main]
 version = 0.2.0

@@ -4,6 +4,8 @@ Created on 2023/8/14 5:44
 
 @author: lxce
 """
+import pandas as pd
+
 #%%
 from RLDAS_self.cldas_plot import Plotter
 from RLDAS_self.RLdas_Read import RlDas_Reader
@@ -13,6 +15,12 @@ import os
 import cmaps
 import argparse
 
+# 入库部分
+from statis.write_tiff import convert_source_totiff
+from statis.statis_rldas import statis_merge
+from un_config.rldas_configl import statis_level_1,statis_level_3,statis_level_5
+from model.Engine import GetSession
+from model.ecforecast import Forecast_Product_Info
 
 #执行函数
 def exec_draw_run(start_time:datetime.datetime,end_time:datetime.datetime,step:int):
@@ -63,13 +71,17 @@ def exec_draw_run(start_time:datetime.datetime,end_time:datetime.datetime,step:i
     """
     降水量预报
     """
+    pre_prefix_list=[]
     for pre_item in pre_data_list:
+
+        pre_stat_dict=dict()
         # 数据产品
         pre_data=pre_item['data']
         forecast_start_time=pre_item['forecast_start_time']
         forecast_end_time=pre_item['forecast_end_time']
         forecast_start_time_str=forecast_start_time.strftime('%m月%d日%H时')
         forecast_end_time_str=forecast_end_time.strftime('%m月%d日%H时')
+
 
 
         # 绘制降水量预报
@@ -92,6 +104,9 @@ def exec_draw_run(start_time:datetime.datetime,end_time:datetime.datetime,step:i
 
         # 文件名
         filename = f"{forecast_start_time.strftime('%m%d%H')}_{forecast_end_time.strftime('%m%d%H')}_heilongjiang_pre_forecast" + '.png'
+        pre_tif= f"{forecast_start_time.strftime('%m%d%H')}_{forecast_end_time.strftime('%m%d%H')}_heilongjiang_pre_forecast" + '.tif'
+        convert_source_totiff(lon,lat,pre_data,pre_tif)
+
         out_file = pre_ploter.get_output_file_path('pre', 1, output_prefix, filename)
         subdirectories = pre_ploter.create_subdirectories(output_prefix)
         for subdirectory in subdirectories.values():
@@ -108,6 +123,10 @@ def exec_draw_run(start_time:datetime.datetime,end_time:datetime.datetime,step:i
             tips="colors",
             draw_river=True
         )
+        pre_stat_dict['forecast_start_time']=pre_item['forecast_start_time']
+        pre_stat_dict['forecast_end_time']=pre_item['forecast_end_time']
+        pre_stat_dict['pre_tif']=pre_tif
+        pre_prefix_list.append(pre_stat_dict)
         del titles, out_file
 
 
@@ -115,7 +134,13 @@ def exec_draw_run(start_time:datetime.datetime,end_time:datetime.datetime,step:i
     """
     风速预报出图
     """
+    wins_prefix_list=[]
+
+
     for wins_item in wins_data_list:
+
+        wins_stat_dict=dict()
+
         # 数据产品
         wins_data=wins_item['data']
 
@@ -140,6 +165,10 @@ def exec_draw_run(start_time:datetime.datetime,end_time:datetime.datetime,step:i
 
         # 文件名
         filename = f"{forecast_start_time.strftime('%m%d%H')}_{forecast_end_time.strftime('%m%d%H')}_heilongjiang_wins_forecast" + '.png'
+        wins_tif = f"{forecast_start_time.strftime('%m%d%H')}_{forecast_end_time.strftime('%m%d%H')}_heilongjiang_wins_forecast" + '.tif'
+
+        convert_source_totiff(lon,lat,wins_data,wins_tif)
+
         out_file = pre_ploter.get_output_file_path('wins', 1, output_prefix, filename)
         subdirectories = pre_ploter.create_subdirectories(output_prefix)
         for subdirectory in subdirectories.values():
@@ -156,13 +185,21 @@ def exec_draw_run(start_time:datetime.datetime,end_time:datetime.datetime,step:i
             tips="cmaps",
             draw_river=True
         )
+
+        wins_stat_dict['forecast_start_time']=wins_item['forecast_start_time']
+        wins_stat_dict['forecast_end_time']=wins_item['forecast_end_time']
+        wins_stat_dict['wins_tif']=wins_tif
+        wins_prefix_list.append(wins_stat_dict)
         del titles, out_file
 
 
     """
     位能预报出图
     """
+
+    cape_prefix_list=[]
     for cape_item in cape_data_list:
+        cape_stat_dict=dict()
 
         # 数据产品
         data=cape_item['data']
@@ -189,6 +226,9 @@ def exec_draw_run(start_time:datetime.datetime,end_time:datetime.datetime,step:i
 
         # 文件名
         filename = f"{forecast_start_time.strftime('%m%d%H')}_{forecast_end_time.strftime('%m%d%H')}_heilongjiang_cp_forecast" + '.png'
+        cape_tif= f"{forecast_start_time.strftime('%m%d%H')}_{forecast_end_time.strftime('%m%d%H')}_heilongjiang_cp_forecast" + '.tif'
+        convert_source_totiff(lon,lat,data,cape_tif)
+
         out_file = pre_ploter.get_output_file_path('cp', 1, output_prefix, filename)
         subdirectories = pre_ploter.create_subdirectories(output_prefix)
         for subdirectory in subdirectories.values():
@@ -205,7 +245,70 @@ def exec_draw_run(start_time:datetime.datetime,end_time:datetime.datetime,step:i
             tips="cmaps",
             draw_river=True
         )
+        cape_stat_dict['forecast_start_time']=cape_item['forecast_start_time']
+        cape_stat_dict['forecast_end_time']=cape_item['forecast_end_time']
+        cape_stat_dict['wins_tif']=cape_tif
+        cape_prefix_list.append(cape_stat_dict)
         del titles, out_file
+
+    for i in range(len(pre_prefix_list)):
+
+        forecast_start_time_stat = pre_prefix_list[i]['forecast_start_time']
+        forecast_end_time_stat = pre_prefix_list[i]['forecast_end_time']
+
+
+        pre_stat_tif=pre_prefix_list[i]['pre_tif']
+        wins_stat_tif=wins_prefix_list[i]['wins_tif']
+        cape_stat_tif=cape_prefix_list[i]['cape_tif']
+        forecast_utc_time=start_time+datetime.timedelta(hours=-8)
+        forecast_time_str_report=start_time.strftime('%Y%m%d%H')+end_time.strftime('%Y%m%d%H')
+        forecast_figure_str=forecast_start_time_stat.strftime('%Y%m%d%H')+forecast_end_time_stat.strftime('%Y%m%d%H')
+
+        df_level1_out=statis_merge(pre_stat_tif,wins_stat_tif,cape_stat_tif,statis_level_1,forecast_type,1,step,
+                                   0,forecast_utc_time,start_time,forecast_time_str_report,
+                                   forecast_figure_str)
+        df_level3_out=statis_merge(pre_stat_tif,wins_stat_tif,cape_stat_tif,statis_level_3,forecast_type,3,step,
+                                   0,forecast_utc_time,start_time,forecast_time_str_report,
+                                   forecast_figure_str)
+        df_level5_out=statis_merge(pre_stat_tif,wins_stat_tif,cape_stat_tif,statis_level_5,forecast_type,5,step,
+                                   0,forecast_utc_time,start_time,forecast_time_str_report,
+                                   forecast_figure_str)
+        commit_database(df_level1_out)
+        commit_database(df_level3_out)
+        commit_database(df_level5_out)
+
+
+
+
+
+
+def commit_database(out_df:pd.DataFrame):
+    Session=GetSession()
+    for item in out_df:
+        entity=Forecast_Product_Info(
+            forecast_type=item.forecast_type,region_level=item.region_level,region=item.region,
+            forecast_step=item.forecast_step,forecast_imminent_tag=item.forecast_imminent_tag,
+            forecast_cycle_utc=item.forecast_cycle_utc,forecast_report_time=item.forecast_report_time,
+            forecast_timestr=item.forecast_time_str,forecast_figure_timestr=item.forecast_figure_timestr,
+            area=item.area,pre_max=item.pre_max,pre_avg=item.pre_mean,wind_max=item.wins_max,wind_avg=item.wins_mean,
+            cape_max=item.cape_max,cape_avg=item.cape_mean,
+            pre_level_0=item.pre_level_0,
+            pre_level_1=item.pre_level_1,pre_level_2=item.pre_level_2,pre_level_3=item.pre_level_3,
+            pre_level_4=item.pre_level_4,pre_level_5=item.pre_level_5,pre_level_6=item.pre_level_6,
+            cape_low_risk=item.cape_low_risk,cape_high_risk=item.cape_high_risk,
+            wins_level0=item.wins_level_0,wins_level1=item.wins_level_1,wins_level2=item.wins_level_2,
+            wins_level3=item.wins_level_3,wins_level4=item.wins_level_4,wins_level5=item.wins_level_5,
+            wins_level6=item.wins_level_6,wins_level7=item.wins_level_7,wins_level8=item.wins_level_8,
+            wins_level9=item.wins_level_9,
+            forecast_exec_time=datetime.datetime.utcnow()+datetime.timedelta(hours=8)
+        )
+        Session.merge(entity)
+
+    Session.commit()
+    print("入库成功")
+
+    Session.close()
+
 
 
 

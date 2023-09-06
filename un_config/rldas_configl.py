@@ -13,6 +13,10 @@ map_extent = [120.0, 135.5, 42.0, 55.0]
 output_prefix = '/share/data/pic_heilongjiang/RLDAS_WRF'
 
 
+statis_level_1='/share/statis_feature/statis_feature/level/level1/level1.shp'
+statis_level_3='/share/statis_feature/statis_feature/level/level3/level3.shp'
+statis_level_5='/share/statis_feature/statis_feature/level/level5/level5.shp'
+
 def generate_plot_config(step: int) -> dict:
     pre_mid_level = [0, 0.1, 10, 25, 50, 100, 250, 500]  # 短期或中期降水量拉伸
     pre_mid_ticks = [0.1, 10, 25, 50, 100, 250]  # 短期或中期降水刻度

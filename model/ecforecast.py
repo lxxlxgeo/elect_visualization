@@ -113,6 +113,7 @@ class Forecast_Product_Info(Base):
     wins_level3 = Column(FLOAT, doc="3级风速所占比例", comment="3级风速所占比例")
     wins_level2 = Column(FLOAT, doc="2级风速所占比例", comment="2级风速所占比例")
     wins_level1 = Column(FLOAT, doc="1级风速所占比例", comment="1级风速所占比例")
+    wins_level0 = Column(FLOAT,doc="0级风速所占比例",comment="0级风速所占比例")
 
     #
     forecast_exec_time=Column(DATETIME,doc="执行时间",comment="执行时间")

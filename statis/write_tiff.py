@@ -91,16 +91,16 @@ def convert_source_totiff(lon:np.ndarray,lat:np.ndarray,data:np.ndarray,outfile:
 # write tiff 测试程序,将兰伯特投影转换为等经纬投影
 import datetime
 start_time=datetime.datetime(2023,8,31,20)
-end_time=datetime.datetime(2023,9,1,8)
-step=3
+end_time=datetime.datetime(2023,9,1,18)
+step=12
 rldas_readers=RlDas_Reader(start_time,end_time,step)
 lon,lat,proj=rldas_readers.__get__init_field_info__()
 lon=lon.to_numpy()
 lat=lat.to_numpy()
-pre_data=rldas_readers.get_data('pre')
+pre_data=rldas_readers.get_data('wspd_wdir10')
 pre_data_1=pre_data[0]['data']
 
-convert_source_totiff(lon,lat,pre_data_1,r'G:\data\tiff3.tif')
+convert_source_totiff(lon,lat,pre_data_1,r'G:\data\tiff3wdir.tif')
 
 
 
